@@ -1,0 +1,19 @@
+# Node dependencies
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Runtime
+.env
+*.env
+.DS_Store
+
+# Google Cloud credentials
+gcloud-key.json
+
+# Optional: OS/system
+Thumbs.db
+.vscode/

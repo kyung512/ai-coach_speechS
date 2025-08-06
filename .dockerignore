@@ -1,0 +1,30 @@
+# .dockerignore
+# Ignore Node.js-related files
+node_modules
+npm-debug.log*
+*.log
+
+# Exclude compiled files
+dist
+build
+# public
+
+.DS_Store
+
+# Exclude sensitive environment files
+.env
+.env.*
+server/.env
+server/gcloud-key.json
+
+# Exclude version control and editor files
+.git
+.gitignore
+.vscode
+.idea
+
+# Ignore development files
+# src/
+
+# Ignore GOOGLE_APPLICATION_CREDENTIALS
+server/gcloud-key.json

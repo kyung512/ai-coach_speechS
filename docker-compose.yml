@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  ai-chatbot:
+    build: 
+      context: .
+      args:
+        # Frontend build variables (safe to expose)
+        VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
+        VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
+        VITE_API_URL: ${VITE_API_URL}
+        VITE_TTS_ENGINE: "gcloud"
+    container_name: ai-chatbot
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./server/gcloud-key.json:/app/server/secrets/gcloud-key.json:ro
+    environment:
+      # Runtime backend variables
+      - PORT=3000
+      - GEMINI_API_URL=${GEMINI_API_URL}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY}
+      - ELEVENLABS_VOICE_ID=${ELEVENLABS_VOICE_ID}
+      - GCLOUD_TTS_VOICE_NAME=${GCLOUD_TTS_VOICE_NAME}
+      - GCLOUD_TTS_AUDIO_ENCODING=${GCLOUD_TTS_AUDIO_ENCODING}
+      - GCLOUD_TTS_SAMPLE_RATE_HERTZ=${GCLOUD_TTS_SAMPLE_RATE_HERTZ}
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/server/secrets/gcloud-key.json
+      # - GOOGLE_APPLICATION_CREDENTIALS=/app/server/secrets/gcloud-key.json
