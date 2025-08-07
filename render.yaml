@@ -13,6 +13,16 @@ services:
       VITE_TTS_ENGINE: gcloud
     
     envVars:
+      # Frontend build variables
+      - key: VITE_SUPABASE_URL
+        value: https://nhmpwzwyyhymglgcfmqh.supabase.co
+      - key: VITE_SUPABASE_ANON_KEY  
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5obXB3end5eWh5bWdsZ2NmbXFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzMjUzMTIsImV4cCI6MjA2OTkwMTMxMn0.-hBWAwRNv1xtMds8ZlX0FUsm2zZiVzZY86WwP9WHvKg
+      - key: VITE_API_URL
+        value: https://ai-coach-speechs.onrender.com/
+      - key: VITE_TTS_ENGINE
+        value: gcloud
+        
       # Backend runtime variables
       - key: PORT
         value: 3000
