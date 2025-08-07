@@ -1,0 +1,45 @@
+# render.yaml - Create this in your project root
+services:
+  - type: web
+    name: ai-chatbot
+    env: docker
+    dockerfilePath: ./Dockerfile
+    # Render will build and run your Docker container
+    
+    # Environment variables (set these in Render dashboard)
+    envVars:
+      # Frontend build variables
+      - key: VITE_SUPABASE_URL
+        value: https://nhmpwzwyyhymglgcfmqh.supabase.co
+      - key: VITE_SUPABASE_ANON_KEY  
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5obXB3end5eWh5bWdsZ2NmbXFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzMjUzMTIsImV4cCI6MjA2OTkwMTMxMn0.-hBWAwRNv1xtMds8ZlX0FUsm2zZiVzZY86WwP9WHvKg
+      - key: VITE_API_URL
+        value: https://ai-chatbot.onrender.com
+      - key: VITE_TTS_ENGINE
+        value: gcloud
+        
+      # Backend runtime variables
+      - key: PORT
+        value: 3000
+      - key: GEMINI_API_URL
+        value: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent
+      - key: GEMINI_API_KEY
+        sync: false  # This means set it manually in dashboard (secret)
+      - key: ELEVENLABS_API_KEY
+        sync: false  # Secret - set in dashboard
+      - key: ELEVENLABS_VOICE_ID
+        value: 21m00Tcm4TlvDq8ikWAM
+      - key: GCLOUD_TTS_VOICE_NAME
+        value: en-US-Wavenet-D
+      - key: GCLOUD_TTS_AUDIO_ENCODING
+        value: MP3
+      - key: GCLOUD_TTS_SAMPLE_RATE_HERTZ
+        value: 16000
+      - key: GOOGLE_APPLICATION_CREDENTIALS_JSON
+        value: false
+        
+    # For Google Cloud key file
+    # secrets:
+    #   - name: GOOGLE_CLOUD_KEY
+    #     path: /app/server/secrets/gcloud-key.json
+    #     sync: false

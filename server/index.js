@@ -12,6 +12,12 @@ import { TextToSpeechClient } from '@google-cloud/text-to-speech';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
+  const credentialsPath = '/tmp/gcloud-key.json';
+  fs.writeFileSync(credentialsPath, process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
+  process.env.GOOGLE_APPLICATION_CREDENTIALS = credentialsPath;
+}
+
 console.log('🔍 Loading environment variables...');
 dotenv.config();
 

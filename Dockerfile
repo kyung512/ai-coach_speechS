@@ -25,7 +25,7 @@ ENV VITE_TTS_ENGINE=$VITE_TTS_ENGINE
 RUN npm run build
 
 # Verify build output
-RUN echo "Build complete - checking files:" && ls -la dist/ && echo "vite.svg present:" && ls -la dist/vite.svg
+# RUN echo "Build complete - checking files:" && ls -la dist/ && echo "vite.svg present:" && ls -la dist/vite.svg
 
 # Stage 2: Backend & Final Image
 FROM node:18-alpine AS runner
@@ -43,13 +43,17 @@ COPY --from=builder /app/dist ./dist
 # COPY server/gcloud-key.json ./gcloud-key.json
 # ENV GOOGLE_APPLICATION_CREDENTIALS="/app/server/gcloud-key.json"
 
-RUN echo "Files copied to runner stage:" && ls -la dist/ && echo "vite.svg in runner:" && ls -la dist/vite.svg || echo "vite.svg missing!"
+# RUN echo "Files copied to runner stage:" && ls -la dist/ && echo "vite.svg in runner:" && ls -la dist/vite.svg || echo "vite.svg missing!"
 
 # Create directory for secrets
 RUN mkdir -p /app/server/secrets
 
 # Expose the port your server will listen on
-EXPOSE 3000
+# EXPOSE 3000
+
+# Render runs on PORT from environment variable
+ENV PORT=${PORT:-3000}
+EXPOSE $PORT
 
 # Set the command to start the backend server
 CMD ["node", "server/index.js"]
