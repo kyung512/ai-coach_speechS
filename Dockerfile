@@ -15,7 +15,7 @@ ENV VITE_TTS_ENGINE="PLACEHOLDER_TTS_ENGINE"
 
 RUN npm run build
 
-RUN npm ci --only=production
+# RUN npm ci --only=production
 
 # Copy and make the startup script executable
 COPY start.sh /app/start.sh
