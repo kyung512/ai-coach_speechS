@@ -1,5 +1,5 @@
 # Stage 1: Frontend Build
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
@@ -28,7 +28,7 @@ RUN npm run build
 # RUN echo "Build complete - checking files:" && ls -la dist/ && echo "vite.svg present:" && ls -la dist/vite.svg
 
 # Stage 2: Backend & Final Image
-FROM node:18-alpine AS runner
+FROM node:20-alpine AS runner
 
 # This is where we handle the backend dependencies
 WORKDIR /app/server
