@@ -1,58 +1,31 @@
-# Stage 1: Frontend Build
-FROM node:20-alpine AS builder
+FROM node:20-alpine
 
 WORKDIR /app
 
+# Copy package files
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
+# Copy source code
 COPY . .
 
-# Build arguments for frontend environment variables
-ARG VITE_SUPABASE_URL
-ARG VITE_SUPABASE_ANON_KEY
-ARG VITE_API_URL
-ARG VITE_TTS_ENGINE
+# Debug: Print the values from environment
+RUN echo "ENV VITE_SUPABASE_URL: $VITE_SUPABASE_URL"
+RUN echo "ENV VITE_API_URL: $VITE_API_URL"
 
-# # Set environment variables for build
-ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
-ENV VITE_SUPABASE_ANON_KEY=$VITE_SUPABASE_ANON_KEY
-ENV VITE_API_URL=$VITE_API_URL
-ENV VITE_TTS_ENGINE=$VITE_TTS_ENGINE
-
-# Debug: Print the values (remove after testing)
-RUN echo "Building with VITE_SUPABASE_URL: $VITE_SUPABASE_URL"
-RUN echo "Building with VITE_API_URL: $VITE_API_URL"
-
+# Build the app (Vite will pick up VITE_ env vars automatically)
 RUN npm run build
 
-# Verify build output
-# RUN echo "Build complete - checking files:" && ls -la dist/ && echo "vite.svg present:" && ls -la dist/vite.svg
-
-# Stage 2: Backend & Final Image
-FROM node:20-alpine AS runner
-
-# This is where we handle the backend dependencies
-WORKDIR /app/server
-COPY server/package*.json ./
-RUN npm install --omit=dev
-
-# Now change back to the root of the app
+# Production stage
+FROM node:20-alpine
 WORKDIR /app
-COPY server/ ./server/
-COPY --from=builder /app/dist ./dist
 
-# RUN echo "Files copied to runner stage:" && ls -la dist/ && echo "vite.svg in runner:" && ls -la dist/vite.svg || echo "vite.svg missing!"
+# Copy built app and server code
+COPY --from=0 /app/dist ./dist
+COPY --from=0 /app/server ./server
+COPY --from=0 /app/package*.json ./
 
-# Create directory for secrets
-RUN mkdir -p /app/server/secrets
+RUN npm ci --only=production
 
-# Expose the port your server will listen on
-# EXPOSE 3000
-
-# Render runs on PORT from environment variable
-ENV PORT=${PORT:-3000}
-EXPOSE $PORT
-
-# Set the command to start the backend server
-CMD ["node", "server/index.js"]
+EXPOSE 3000
+CMD ["npm", "start"]
