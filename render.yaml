@@ -4,34 +4,24 @@ services:
     name: ai-chatbot
     env: docker
     dockerfilePath: ./Dockerfile
-
+    
     # Add build arguments section
     dockerBuildArgs:
       VITE_SUPABASE_URL: https://nhmpwzwyyhymglgcfmqh.supabase.co
-      VITE_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5obXB3end5eWh5bWdsZ2NmbXFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzMjUzMTIsImV4cCI6MjA2OTkwMTMxMn0.-hBWAwRNv1xtMds8ZlX0FUsm2zZiVzZY86WwP9WHvKg
-      VITE_API_URL: https://ai-coach-speechs.onrender.com/
+      VITE_SUPABASE_ANON_KEY: ey1xtMds8ZlX0FUsm2z...
+      VITE_API_URL: https://ai-coach-speechs.onrender.com
       VITE_TTS_ENGINE: gcloud
-
+    
     envVars:
-      # Frontend build variables
-      # - key: VITE_SUPABASE_URL
-      #   value: https://nhmpwzwyyhymglgcfmqh.supabase.co
-      # - key: VITE_SUPABASE_ANON_KEY  
-      #   value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5obXB3end5eWh5bWdsZ2NmbXFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzMjUzMTIsImV4cCI6MjA2OTkwMTMxMn0.-hBWAwRNv1xtMds8ZlX0FUsm2zZiVzZY86WwP9WHvKg
-      # - key: VITE_API_URL
-      #   value: https://ai-coach-speechs.onrender.com/
-      # - key: VITE_TTS_ENGINE
-      #   value: gcloud
-        
       # Backend runtime variables
       - key: PORT
         value: 3000
       - key: GEMINI_API_URL
         value: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent
       - key: GEMINI_API_KEY
-        sync: false  
+        sync: false
       - key: ELEVENLABS_API_KEY
-        sync: false 
+        sync: false
       - key: ELEVENLABS_VOICE_ID
         value: 21m00Tcm4TlvDq8ikWAM
       - key: GCLOUD_TTS_VOICE_NAME
@@ -41,5 +31,4 @@ services:
       - key: GCLOUD_TTS_SAMPLE_RATE_HERTZ
         value: 16000
       - key: GOOGLE_APPLICATION_CREDENTIALS_JSON
-        value: false
-        
+        sync: false  # This should be sync: false, not value: false

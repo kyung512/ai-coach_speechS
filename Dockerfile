@@ -1,13 +1,20 @@
-# Build stage
-FROM node:20-alpine AS builder
+FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy package files
+# Copy root package files and install frontend dependencies
 COPY package*.json ./
 RUN npm ci
 
-# Copy source code
+# Copy server package files and install server dependencies
+COPY server/package*.json ./server/
+WORKDIR /app/server
+RUN npm ci
+
+# Go back to app root
+WORKDIR /app
+
+# Copy all source code
 COPY . .
 
 # Build with placeholder values
@@ -17,21 +24,6 @@ ENV VITE_API_URL="PLACEHOLDER_API_URL"
 ENV VITE_TTS_ENGINE="PLACEHOLDER_TTS_ENGINE"
 
 RUN npm run build
-
-# Production stage
-FROM node:20-alpine
-
-WORKDIR /app
-
-# Copy package files and install production dependencies
-COPY package*.json ./
-RUN npm ci --omit=dev
-
-# Copy built frontend from builder stage
-COPY --from=builder /app/dist ./dist
-
-# Copy server code
-COPY server ./server
 
 # Copy and make the startup script executable
 COPY start.sh /app/start.sh
