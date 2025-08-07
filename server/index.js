@@ -21,28 +21,21 @@ if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
 console.log('🔍 Loading environment variables...');
 dotenv.config();
 
-console.log('🔍 Creating Express app...');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-console.log('🔍 Initializing Google Cloud TTS client...');
 let gcloudTtsClient = null;
 try {
   gcloudTtsClient = new TextToSpeechClient();
-  console.log('✅ Google Cloud TTS client initialized');
 } catch (error) {
   console.warn('⚠️ Google Cloud TTS client initialization failed:', error.message);
 }
 
-console.log('🔍 Setting up middleware...');
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../dist')));
 
-console.log('🔍 Setting up routes...');
-
 // Debug route
-console.log('🔍 Adding /api/debug route...');
 app.get('/api/debug', (req, res) => {
   const distPath = path.join(__dirname, '../dist');
   const indexPath = path.join(distPath, 'index.html');
@@ -77,7 +70,6 @@ app.get('/api/debug', (req, res) => {
 });
 
 // Health check
-console.log('🔍 Adding /api/health route...');
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'OK', 
@@ -88,7 +80,6 @@ app.get('/api/health', (req, res) => {
 });
 
 // ElevenLabs TTS
-console.log('🔍 Adding /api/elevenlabs-tts-proxy route...');
 app.post('/api/elevenlabs-tts-proxy', async (req, res) => {
   try {
     const { text } = req.body;
@@ -148,7 +139,6 @@ app.post('/api/elevenlabs-tts-proxy', async (req, res) => {
 });
 
 // Google Cloud TTS
-console.log('🔍 Adding /api/gcloud-tts-proxy route...');
 app.post('/api/gcloud-tts-proxy', async (req, res) => {
   try {
     const { text } = req.body;
@@ -217,7 +207,6 @@ app.post('/api/gcloud-tts-proxy', async (req, res) => {
 });
 
 // Chat endpoint
-console.log('🔍 Adding /api/chat route...');
 app.post('/api/chat', async (req, res) => {
   try {
     const { systemInstruction, contents, generationConfig } = req.body;
@@ -270,7 +259,6 @@ app.post('/api/chat', async (req, res) => {
 });
 
 // Summarize endpoint
-console.log('🔍 Adding /api/summarize route...');
 app.post('/api/summarize', async (req, res) => {
   try {
     const { contents, generationConfig } = req.body;
@@ -374,7 +362,6 @@ app.use((error, req, res, next) => {
 });
 
 // Start server
-console.log('🔍 Starting server...');
 try {
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
