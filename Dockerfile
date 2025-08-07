@@ -1,60 +1,34 @@
-# Stage 1: Frontend Build
-# Build arguments for frontend environment variables
-ARG VITE_SUPABASE_URL
-ARG VITE_SUPABASE_ANON_KEY
-ARG VITE_API_URL
-ARG VITE_TTS_ENGINE
-
-FROM node:20-alpine AS builder
+FROM node:20-alpine
 
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
 COPY . .
 
-
-# Set environment variables for build
-ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
-ENV VITE_SUPABASE_ANON_KEY=$VITE_SUPABASE_ANON_KEY
-ENV VITE_API_URL=$VITE_API_URL
-ENV VITE_TTS_ENGINE=$VITE_TTS_ENGINE
-
-
+# Build with dummy values (we'll replace at runtime)
+ENV VITE_SUPABASE_URL="PLACEHOLDER_SUPABASE_URL"
+ENV VITE_SUPABASE_ANON_KEY="PLACEHOLDER_SUPABASE_KEY" 
+ENV VITE_API_URL="PLACEHOLDER_API_URL"
+ENV VITE_TTS_ENGINE="PLACEHOLDER_TTS_ENGINE"
 
 RUN npm run build
 
-# Verify build output
-# RUN echo "Build complete - checking files:" && ls -la dist/ && echo "vite.svg present:" && ls -la dist/vite.svg
+RUN npm ci --only=production
 
-# Stage 2: Backend & Final Image
-FROM node:20-alpine AS runner
+EXPOSE 3000
 
-# This is where we handle the backend dependencies
-WORKDIR /app/server
-COPY server/package*.json ./
-RUN npm install --omit=dev
+# Create startup script
+RUN echo '#!/bin/sh\n\
+# Replace placeholders in JS files\n\
+find /app/dist -name "*.js" -exec sed -i "s/PLACEHOLDER_SUPABASE_URL/$VITE_SUPABASE_URL/g" {} \\;\n\
+find /app/dist -name "*.js" -exec sed -i "s/PLACEHOLDER_SUPABASE_KEY/$VITE_SUPABASE_ANON_KEY/g" {} \\;\n\
+find /app/dist -name "*.js" -exec sed -i "s/PLACEHOLDER_API_URL/$VITE_API_URL/g" {} \\;\n\
+find /app/dist -name "*.js" -exec sed -i "s/PLACEHOLDER_TTS_ENGINE/$VITE_TTS_ENGINE/g" {} \\;\n\
+# Start server\n\
+exec node server/index.js' > /app/start.sh
 
-# Now change back to the root of the app
-WORKDIR /app
-COPY server/ ./server/
-COPY --from=builder /app/dist ./dist
+RUN chmod +x /app/start.sh
 
-# COPY server/gcloud-key.json ./gcloud-key.json
-# ENV GOOGLE_APPLICATION_CREDENTIALS="/app/server/gcloud-key.json"
-
-# RUN echo "Files copied to runner stage:" && ls -la dist/ && echo "vite.svg in runner:" && ls -la dist/vite.svg || echo "vite.svg missing!"
-
-# Create directory for secrets
-RUN mkdir -p /app/server/secrets
-
-# Expose the port your server will listen on
-# EXPOSE 3000
-
-# Render runs on PORT from environment variable
-ENV PORT=${PORT:-3000}
-EXPOSE $PORT
-
-# Set the command to start the backend server
-CMD ["node", "server/index.js"]
+CMD ["/app/start.sh"]
