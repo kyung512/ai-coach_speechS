@@ -9,28 +9,22 @@ RUN npm install
 COPY . .
 
 # Build arguments for frontend environment variables
-# ARG VITE_SUPABASE_URL
-# ARG VITE_SUPABASE_ANON_KEY
-# ARG VITE_API_URL
-# ARG VITE_TTS_ENGINE
+ARG VITE_SUPABASE_URL
+ARG VITE_SUPABASE_ANON_KEY
+ARG VITE_API_URL
+ARG VITE_TTS_ENGINE
 
 # # Set environment variables for build
-# ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
-# ENV VITE_SUPABASE_ANON_KEY=$VITE_SUPABASE_ANON_KEY
-# ENV VITE_API_URL=$VITE_API_URL
-# ENV VITE_TTS_ENGINE=$VITE_TTS_ENGINE
+ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
+ENV VITE_SUPABASE_ANON_KEY=$VITE_SUPABASE_ANON_KEY
+ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_TTS_ENGINE=$VITE_TTS_ENGINE
 
-# RUN npm run build
+# Debug: Print the values (remove after testing)
+RUN echo "Building with VITE_SUPABASE_URL: $VITE_SUPABASE_URL"
+RUN echo "Building with VITE_API_URL: $VITE_API_URL"
 
-RUN --mount=type=secret,id=vite_supabase_url \
-    --mount=type=secret,id=vite_supabase_anon_key \
-    --mount=type=secret,id=vite_api_url \
-    --mount=type=secret,id=vite_tts_engine \
-    VITE_SUPABASE_URL=$(cat /run/secrets/vite_supabase_url) \
-    VITE_SUPABASE_ANON_KEY=$(cat /run/secrets/vite_supabase_anon_key) \
-    VITE_API_URL=$(cat /run/secrets/vite_api_url) \
-    VITE_TTS_ENGINE=$(cat /run/secrets/vite_tts_engine) \
-    npm run build
+RUN npm run build
 
 # Verify build output
 # RUN echo "Build complete - checking files:" && ls -la dist/ && echo "vite.svg present:" && ls -la dist/vite.svg
@@ -47,9 +41,6 @@ RUN npm install --omit=dev
 WORKDIR /app
 COPY server/ ./server/
 COPY --from=builder /app/dist ./dist
-
-# COPY server/gcloud-key.json ./gcloud-key.json
-# ENV GOOGLE_APPLICATION_CREDENTIALS="/app/server/gcloud-key.json"
 
 # RUN echo "Files copied to runner stage:" && ls -la dist/ && echo "vite.svg in runner:" && ls -la dist/vite.svg || echo "vite.svg missing!"
 
