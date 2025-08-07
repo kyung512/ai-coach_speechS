@@ -17,18 +17,10 @@ RUN npm run build
 
 RUN npm ci --only=production
 
-EXPOSE 3000
-
-# Create startup script
-RUN echo '#!/bin/sh\n\
-# Replace placeholders in JS files\n\
-find /app/dist -name "*.js" -exec sed -i "s/PLACEHOLDER_SUPABASE_URL/$VITE_SUPABASE_URL/g" {} \\;\n\
-find /app/dist -name "*.js" -exec sed -i "s/PLACEHOLDER_SUPABASE_KEY/$VITE_SUPABASE_ANON_KEY/g" {} \\;\n\
-find /app/dist -name "*.js" -exec sed -i "s/PLACEHOLDER_API_URL/$VITE_API_URL/g" {} \\;\n\
-find /app/dist -name "*.js" -exec sed -i "s/PLACEHOLDER_TTS_ENGINE/$VITE_TTS_ENGINE/g" {} \\;\n\
-# Start server\n\
-exec node server/index.js' > /app/start.sh
-
+# Copy and make the startup script executable
+COPY start.sh /app/start.sh
 RUN chmod +x /app/start.sh
+
+EXPOSE 3000
 
 CMD ["/app/start.sh"]
